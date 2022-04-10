@@ -1,3 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Task_5;
 
-Console.WriteLine("Hello, World!");
+var binNum = new BigInteger("209");
+var bigNumm = new BigInteger("101");
+binNum.Add(bigNumm);
+Console.WriteLine(binNum);
