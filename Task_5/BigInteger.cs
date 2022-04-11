@@ -6,6 +6,7 @@ public class BigInteger
 
     public BigInteger(string? value)
     {
+        int a = 56700;
         int n = 0;
         if (value != null)
         {
