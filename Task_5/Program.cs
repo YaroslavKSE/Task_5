@@ -1,6 +1,8 @@
 ﻿using Task_5;
 
-var binNum = new BigInteger("209");
-var bigNumm = new BigInteger("101");
-binNum.Add(bigNumm);
+var binNum = new BigInteger("930193021930193091309130913012931");
+var bigNum2 = new BigInteger("3587389457398573957375354");
 Console.WriteLine(binNum);
+Console.WriteLine(bigNum2);
+Console.WriteLine(binNum.Add(bigNum2));
+
