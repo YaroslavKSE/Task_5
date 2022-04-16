@@ -5,6 +5,7 @@ public class BigInteger
 {
     private int[] _numbers;
     private bool _isPositive = true;
+    public static BigInteger operator +(BigInteger a, BigInteger b) => a.Add(b);
 
     public BigInteger(string? value)
     {
@@ -130,7 +131,7 @@ public class BigInteger
         return firstArrayLen >= secondArrayLen ? new BigInteger(string.Join("", _numbers)) : another;
     }
     
-    public void Sub(BigInteger another)
+    public BigInteger Sub(BigInteger another)
     {
         int firstArrayLen = _numbers.Length - 1;
         int secondArrayLen = another._numbers.Length - 1;
@@ -192,7 +193,7 @@ public class BigInteger
                     secondArrayLen--;
                 }
             }
-            return;
+            return new BigInteger(string.Join("", _numbers));
         }
 
         if (firstArrayLen == secondArrayLen && _numbers[0] > another._numbers[0])
@@ -216,7 +217,7 @@ public class BigInteger
                 secondArrayLen--;
             }
 
-            return;
+            return new BigInteger(string.Join("", _numbers));
         }
 
         if (firstArrayLen == secondArrayLen && _numbers[0] < another._numbers[0])
@@ -244,9 +245,16 @@ public class BigInteger
                 firstArrayLen--;
                 secondArrayLen--;
             }
-            _isPositive = false;
-            
         }
         
+        var result = new BigInteger(string.Join("", _numbers));
+        result._isPositive = false;
+        return result;
     }
+
+    public BigInteger Multiply(BigInteger another)
+    {
+        return null;
+    }
+    
 }
