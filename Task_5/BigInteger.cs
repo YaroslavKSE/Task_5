@@ -1,16 +1,16 @@
-﻿
-namespace Task_5;
+﻿namespace Task_5;
 
 public class BigInteger
 {
     private int[] _numbers;
     private bool _isPositive = true;
     public static BigInteger operator +(BigInteger a, BigInteger b) => a.Add(b);
+    public static BigInteger operator -(BigInteger a, BigInteger b) => a.Sub(b);
 
     public BigInteger(string? value)
     {
         int n = 0;
-        
+
         if (value != null && !value.Contains('-'))
         {
             _numbers = new int[value.Length];
@@ -30,13 +30,13 @@ public class BigInteger
                 {
                     continue;
                 }
+
                 _numbers[n] = Int32.Parse(digit.ToString());
                 n++;
             }
         }
     }
-    
-    
+
     public override string ToString()
     {
         var number = "";
@@ -47,16 +47,19 @@ public class BigInteger
             {
                 number += digit;
             }
+
             return number;
         }
+
         foreach (var digit in _numbers)
         {
             negativeNumber += digit;
         }
+
         return negativeNumber;
     }
-    
-    public BigInteger Add(BigInteger another)
+
+    private BigInteger Add(BigInteger another)
     {
         int firstExtraLenght = _numbers.Length + 1;
         int secondExtraLenght = another._numbers.Length + 1;
@@ -75,7 +78,7 @@ public class BigInteger
                 {
                     var first = addition.ToString()[0];
                     var second = addition.ToString()[1];
-                    
+
                     if (firstArrayLen - 1 == -1)
                     {
                         int[] temporaryArray = new int[firstExtraLenght];
@@ -85,15 +88,16 @@ public class BigInteger
                             temporaryArray[n - 1] = _numbers[n - 2];
                             n--;
                         }
+
                         _numbers = temporaryArray;
                         firstArrayLen++;
                     }
-                    
+
                     _numbers[firstArrayLen - 1] = Int32.Parse(first.ToString()) + _numbers[firstArrayLen - 1];
                     _numbers[firstArrayLen] = Int32.Parse(second.ToString());
                 }
             }
-            
+
             if (firstArrayLen < secondArrayLen)
             {
                 var addition = _numbers[firstArrayLen] + another._numbers[secondArrayLen];
@@ -109,33 +113,35 @@ public class BigInteger
                     {
                         int[] temporaryArray = new int[secondExtraLenght];
                         int n = secondExtraLenght;
-                        
+
                         foreach (var digit in _numbers)
                         {
                             temporaryArray[n - 1] = _numbers[n - 2];
                             n--;
                         }
-                        
+
                         another._numbers = temporaryArray;
                         secondExtraLenght++;
-                        
                     }
-                    another._numbers[secondArrayLen - 1] = Int32.Parse(first.ToString()) + another._numbers[secondArrayLen - 1];
+
+                    another._numbers[secondArrayLen - 1] =
+                        Int32.Parse(first.ToString()) + another._numbers[secondArrayLen - 1];
                     another._numbers[secondArrayLen] = Int32.Parse(second.ToString());
                 }
             }
+
             firstArrayLen--;
             secondArrayLen--;
         }
-        
+
         return firstArrayLen >= secondArrayLen ? new BigInteger(string.Join("", _numbers)) : another;
     }
-    
-    public BigInteger Sub(BigInteger another)
+
+    private BigInteger Sub(BigInteger another)
     {
         int firstArrayLen = _numbers.Length - 1;
         int secondArrayLen = another._numbers.Length - 1;
-        
+
         if (firstArrayLen > secondArrayLen)
         {
             while (firstArrayLen != -1 && secondArrayLen != -1)
@@ -189,10 +195,12 @@ public class BigInteger
                             }
                         }
                     }
+
                     firstArrayLen--;
                     secondArrayLen--;
                 }
             }
+
             return new BigInteger(string.Join("", _numbers));
         }
 
@@ -246,15 +254,25 @@ public class BigInteger
                 secondArrayLen--;
             }
         }
-        
-        var result = new BigInteger(string.Join("", _numbers));
-        result._isPositive = false;
+
+        var result = new BigInteger(string.Join("", _numbers))
+        {
+            _isPositive = false
+        };
         return result;
     }
 
-    public BigInteger Multiply(BigInteger another)
+    public BigInteger Multiplication(BigInteger second)
     {
-        return null;
+        var firstArrayLength = _numbers.Length;
+        var secondArrayLength = second._numbers.Length;
+        var a = Int32.Parse(string.Join("", _numbers[0], _numbers[1]));
+        var b = Int32.Parse(string.Join("", _numbers[2], _numbers[3]));
+        var c = Int32.Parse(string.Join("", second._numbers[0], second._numbers[1]));
+        var d = Int32.Parse(string.Join("", second._numbers[2], second._numbers[3]));
+        var x = Math.Pow(10, firstArrayLength / 2) * a + b;
+        var y = Math.Pow(10, secondArrayLength / 2) * c + d;
+        var result = x * y;
+        return new BigInteger(result.ToString());
     }
-    
 }
