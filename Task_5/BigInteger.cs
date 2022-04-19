@@ -71,7 +71,7 @@ public class BigInteger
         Array.Copy(another._numbers, result2, another._numbers.Length);
         while (firstArrayLen != -1 && secondArrayLen != -1)
         {
-            if (firstArrayLen >= secondArrayLen)
+            if (firstArrayLen >= secondArrayLen && another._isPositive)
             {
                 var addition = result[firstArrayLen] + another._numbers[secondArrayLen];
                 if (addition < 10)
@@ -102,7 +102,7 @@ public class BigInteger
                 }
             }
 
-            if (firstArrayLen < secondArrayLen)
+            if (firstArrayLen < secondArrayLen && another._isPositive)
             {
                 var addition = _numbers[firstArrayLen] + result2[secondArrayLen];
                 if (addition < 10)
@@ -165,7 +165,13 @@ public class BigInteger
                     {
                         if (result[firstArrayLen] != 0)
                         {
+                            
                             result[firstArrayLen - 1] -= 1;
+                            if (result[firstArrayLen - 1] == -1)
+                            {
+                                result[firstArrayLen - 1] = 9;
+                                result[firstArrayLen - 2] -= 1;
+                            }
                             var toChange = 10 + result[firstArrayLen];
                             toChange -= result2[secondArrayLen];
                             result[firstArrayLen] = toChange;
@@ -182,6 +188,7 @@ public class BigInteger
                                         var toChange = 10 + result[firstArrayLen];
                                         toChange -= result2[secondArrayLen];
                                         result[firstArrayLen] = toChange;
+                                        break;
                                     }
 
                                     counter++;
@@ -274,11 +281,18 @@ public class BigInteger
 
     public BigInteger PowerNum(int toPower)
     {
-        var arrLen = _numbers.Length;
-        var secondLen = arrLen + toPower;
-        int[] result = new int[secondLen];
-        Array.Copy(_numbers, result, _numbers.Length);
-        return new BigInteger(string.Join("", result));
+            var arrLen = _numbers.Length;
+            var secondLen = arrLen + toPower;
+            int[] result = new int[secondLen];
+            Array.Copy(_numbers, result, _numbers.Length);
+            if (_isPositive)
+            {
+                return new BigInteger(string.Join("", result));
+            }
+            return new BigInteger(string.Join("", result))
+            {
+                _isPositive = false
+            };
     }
 
     private int Greater(int firstNum, int secondNum)
@@ -329,7 +343,7 @@ public class BigInteger
             var bd = Karatsuba(b, d);
             var ac_bd = Karatsuba(a + b, c + d);
             var ac = Karatsuba(a, c);
-            var best = ((ac.PowerNum(dividedArrLen * 2)) + (ac_bd - ac - bd)).PowerNum(dividedArrLen) + bd;
+            var best = (ac.PowerNum(dividedArrLen * 2)) + (ac_bd - ac - bd).PowerNum(dividedArrLen) + bd;
             result = best;
             return best;
         }
