@@ -151,7 +151,7 @@ public class BigInteger
         Array.Copy(_numbers, result, _numbers.Length);
         Array.Copy(another._numbers, result2, another._numbers.Length);
 
-        if (firstArrayLen > secondArrayLen)
+        if (firstArrayLen > secondArrayLen && result.Length > 10 || result2.Length > 10)
         {
             while (firstArrayLen != -1 && secondArrayLen != -1)
             {
@@ -165,13 +165,13 @@ public class BigInteger
                     {
                         if (result[firstArrayLen] != 0)
                         {
-                            
                             result[firstArrayLen - 1] -= 1;
                             if (result[firstArrayLen - 1] == -1)
                             {
                                 result[firstArrayLen - 1] = 9;
-                                result[firstArrayLen - 2] -= 1;
+                                // result[firstArrayLen - 2] -= 1;
                             }
+
                             var toChange = 10 + result[firstArrayLen];
                             toChange -= result2[secondArrayLen];
                             result[firstArrayLen] = toChange;
@@ -188,7 +188,7 @@ public class BigInteger
                                         var toChange = 10 + result[firstArrayLen];
                                         toChange -= result2[secondArrayLen];
                                         result[firstArrayLen] = toChange;
-                                        break;
+                                        // break;
                                     }
 
                                     counter++;
@@ -272,6 +272,12 @@ public class BigInteger
             }
         }
 
+        if (result.Length < 10 && result2.Length < 10)
+        {
+            var resInt = int.Parse(string.Join("", result)) - int.Parse(string.Join("", result2));
+            return new BigInteger(resInt.ToString());
+        }
+
         var res = new BigInteger(string.Join("", result))
         {
             _isPositive = false
@@ -281,18 +287,19 @@ public class BigInteger
 
     public BigInteger PowerNum(int toPower)
     {
-            var arrLen = _numbers.Length;
-            var secondLen = arrLen + toPower;
-            int[] result = new int[secondLen];
-            Array.Copy(_numbers, result, _numbers.Length);
-            if (_isPositive)
-            {
-                return new BigInteger(string.Join("", result));
-            }
-            return new BigInteger(string.Join("", result))
-            {
-                _isPositive = false
-            };
+        var arrLen = _numbers.Length;
+        var secondLen = arrLen + toPower;
+        int[] result = new int[secondLen];
+        Array.Copy(_numbers, result, _numbers.Length);
+        if (_isPositive)
+        {
+            return new BigInteger(string.Join("", result));
+        }
+
+        return new BigInteger(string.Join("", result))
+        {
+            _isPositive = false
+        };
     }
 
     private int Greater(int firstNum, int secondNum)
@@ -322,7 +329,7 @@ public class BigInteger
 
         BigInteger Karatsuba(BigInteger first, BigInteger second)
         {
-            if (first._numbers.Length == 1 || second._numbers.Length == 1)
+            if (first._numbers.Length < 2 || second._numbers.Length < 2)
             {
                 var result = Int32.Parse(string.Join("", first._numbers)) *
                              Int32.Parse(string.Join("", second._numbers));
