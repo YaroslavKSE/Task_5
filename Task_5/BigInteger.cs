@@ -6,7 +6,8 @@ public class BigInteger
     private bool _isPositive = true;
     public static BigInteger operator +(BigInteger a, BigInteger b) => a.Add(b);
     public static BigInteger operator -(BigInteger a, BigInteger b) => a.Sub(b);
-
+    public static BigInteger operator *(BigInteger a, BigInteger b) => a.Multiplication(b);
+    
     public BigInteger(string? value)
     {
         int n = 0;
@@ -150,7 +151,7 @@ public class BigInteger
         int[] result2 = new int[another._numbers.Length];
         Array.Copy(_numbers, result, _numbers.Length);
         Array.Copy(another._numbers, result2, another._numbers.Length);
-
+        
         if (firstArrayLen > secondArrayLen && result.Length > 10 || result2.Length > 10)
         {
             while (firstArrayLen != -1 && secondArrayLen != -1)
@@ -168,48 +169,50 @@ public class BigInteger
                             result[firstArrayLen - 1] -= 1;
                             if (result[firstArrayLen - 1] == -1)
                             {
-                                result[firstArrayLen - 1] = 9;
-                                // result[firstArrayLen - 2] -= 1;
+                                // result[firstArrayLen - 1] = 9;
+                                var n = firstArrayLen;
+                                while (result[n] == 0 == false)
+                                {
+                                    n--;
+                                    result[n] = 9;
+                                    if (result[n - 1] != 0)
+                                    {
+                                        result[n - 1] -= 1;
+                                        break;
+                                    }
+                                    
+                                }
                             }
-
+                    
                             var toChange = 10 + result[firstArrayLen];
                             toChange -= result2[secondArrayLen];
                             result[firstArrayLen] = toChange;
+                            // firstArrayLen--;
+                            // secondArrayLen--;
                         }
-                        else
+
+                        if (result[firstArrayLen] == 0)
                         {
-                            while (true)
+                            var n = firstArrayLen;
+                            while (result[n - 1] == 0)
                             {
-                                var counter = 0;
-                                foreach (var variable in result.Reverse())
+                                n--;
+                                result[n] = 9;
+                                if (result[n - 1] != 0)
                                 {
-                                    if (variable != 0)
-                                    {
-                                        var toChange = 10 + result[firstArrayLen];
-                                        toChange -= result2[secondArrayLen];
-                                        result[firstArrayLen] = toChange;
-                                        // break;
-                                    }
-
-                                    counter++;
-                                    if (firstArrayLen - counter < 0)
-                                    {
-                                        break;
-                                    }
-
-                                    if (result[firstArrayLen - counter] == 0)
-                                    {
-                                        // result[firstArrayLen] = 9;
-                                        result[firstArrayLen - counter] = 9;
-                                    }
-                                    else
-                                    {
-                                        result[firstArrayLen - counter] -= 1;
-                                    }
+                                    result[n - 1] -= 1;
+                                    break;
                                 }
-
-                                break;
                             }
+                            // if (result[n - 1] != 0)
+                            // {
+                            //     result[n - 1] -= 1;
+                            // }
+                            var toChange = 10 + result[firstArrayLen];
+                            toChange -= result2[secondArrayLen];
+                            result[firstArrayLen] = toChange;
+                            // firstArrayLen--;
+                            // secondArrayLen--;
                         }
                     }
 
@@ -218,6 +221,11 @@ public class BigInteger
                 }
             }
 
+            if (result[0] == 0)
+            {
+                SplitFirstHalfBigger(result, 1, out result, out var res2);
+                return new BigInteger(string.Join("", res2));
+            }
             return new BigInteger(string.Join("", result));
         }
 
@@ -241,7 +249,11 @@ public class BigInteger
                 firstArrayLen--;
                 secondArrayLen--;
             }
-
+            if (result[0] == 0)
+            {
+                SplitFirstHalfBigger(result, 1, out result, out var res2);
+                return new BigInteger(string.Join("", res2));
+            }       
             return new BigInteger(string.Join("", result));
         }
 
@@ -270,6 +282,12 @@ public class BigInteger
                 firstArrayLen--;
                 secondArrayLen--;
             }
+            if (result[0] == 0)
+            {
+                SplitFirstHalfBigger(result, 1, out result, out var res2);
+                return new BigInteger(string.Join("", res2));
+            }       
+            return new BigInteger(string.Join("", result));
         }
 
         if (result.Length < 10 && result2.Length < 10)
@@ -278,14 +296,10 @@ public class BigInteger
             return new BigInteger(resInt.ToString());
         }
 
-        var res = new BigInteger(string.Join("", result))
-        {
-            _isPositive = false
-        };
-        return res;
+        return null;
     }
 
-    public BigInteger PowerNum(int toPower)
+    private BigInteger PowerNum(int toPower)
     {
         var arrLen = _numbers.Length;
         var secondLen = arrLen + toPower;
@@ -312,7 +326,15 @@ public class BigInteger
         return secondNum;
     }
 
-    public void Split<T>(T[] source, int index, out T[] first, out T[] last)
+    private void Split<T>(T[] source, int index, out T[] first, out T[] last)
+    {
+        int len2 = source.Length - index;
+        first = new T[len2];
+        last = new T[index];
+        Array.Copy(source, 0, first, 0, len2);
+        Array.Copy(source, len2, last, 0, index);
+    }
+    private void SplitFirstHalfBigger<T>(T[] source, int index, out T[] first, out T[] last)
     {
         int len2 = source.Length - index;
         first = new T[index];
@@ -321,7 +343,7 @@ public class BigInteger
         Array.Copy(source, index, last, 0, len2);
     }
 
-    public BigInteger Multiplication(BigInteger another)
+    private BigInteger Multiplication(BigInteger another)
     {
         var firstMultiplier = new BigInteger(string.Join("", _numbers));
         var result = new BigInteger("");
@@ -331,41 +353,27 @@ public class BigInteger
         {
             if (first._numbers.Length < 2 || second._numbers.Length < 2)
             {
-                var result = Int32.Parse(string.Join("", first._numbers)) *
+                var multResult = Int32.Parse(string.Join("", first._numbers)) *
                              Int32.Parse(string.Join("", second._numbers));
-                return new BigInteger(result.ToString());
+                return new BigInteger(multResult.ToString());
             }
 
             var dividedArrLen = Greater(first._numbers.Length, second._numbers.Length) / 2;
-            int[] a1 = new int[dividedArrLen];
-            int[] b1 = new int[dividedArrLen];
-            int[] c1 = new int[dividedArrLen];
-            int[] d1 = new int[dividedArrLen];
-            Split(first._numbers, dividedArrLen, out a1, out b1);
-            Split(second._numbers, dividedArrLen, out c1, out d1);
+            Split(first._numbers, dividedArrLen, out var a1, out var b1);
+            Split(second._numbers, dividedArrLen, out var c1, out var d1);
             var a = new BigInteger(string.Join("", a1));
             var b = new BigInteger(string.Join("", b1));
             var c = new BigInteger(string.Join("", c1));
             var d = new BigInteger(string.Join("", d1));
             var bd = Karatsuba(b, d);
-            var ac_bd = Karatsuba(a + b, c + d);
+            var acBd = Karatsuba(a + b, c + d);
             var ac = Karatsuba(a, c);
-            var best = (ac.PowerNum(dividedArrLen * 2)) + (ac_bd - ac - bd).PowerNum(dividedArrLen) + bd;
+            var best = (ac.PowerNum(dividedArrLen * 2)) + (acBd - ac - bd).PowerNum(dividedArrLen) + bd;
             result = best;
             return best;
         }
 
         return result;
-
-        // var firstArrLen = _numbers.Length;
-        // var secondArrLen = another._numbers.Length;
-        // var a = Int32.Parse(string.Join("", _numbers[0], _numbers[1]));
-        // var b = Int32.Parse(string.Join("", _numbers[2], _numbers[3]));
-        // var c = Int32.Parse(string.Join("", another._numbers[0], another._numbers[1]));
-        // var d = Int32.Parse(string.Join("", another._numbers[2], another._numbers[3]));
-        // var x = Math.Pow(10, firstArrLen / 2) * a + b;
-        // var y = Math.Pow(10, secondArrLen / 2) * c + d;
-        // var result = x * y;
-        // var best = Math.Pow(10, firstArrLen) * a * c + Math.Pow(10, secondArrLen / 2) * (a * d + b * c) + b * d ;
+        
     }
 }
